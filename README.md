@@ -109,11 +109,20 @@ the normal case for build-time rendered markdown.
 list and runs the scroll spy. `sectionSelector` and `sectionInfo` exist for a document
 assembled from several files, where file dividers appear in the contents alongside headings.
 
-`enhanceCodeBlocks(container, { highlight })` — wraps bare `<pre>` in `.code-block` with a
-copy button, a language tag, and a fold-all button for blocks that contain
+`enhanceCodeBlocks(container, { highlight, regions })` — wraps bare `<pre>` in `.code-block`
+with a copy button, a language tag, and a fold-all button for blocks that contain
 `details.code-region`. With `highlight: true`, `highlight.js` is imported only if the page
 actually has a `language-*` block. Blocks that already carry the markup are left alone, so it
 is safe to run on output from a renderer that produced it.
+
+`foldCodeRegions(container)` — folds the regions of code that arrived as plain text, for a
+renderer that does not know the markers: code between a `# region <name>` line and a
+`# endregion` line (also `// region`, `#region`) becomes a `details.code-region` under its
+name, and the code as it was written is kept on the block's `data-code` for the copy button,
+because the rendered text now also holds the summary labels. A block with no complete region
+is left alone, and so is one that already has the markup. `enhanceCodeBlocks` runs it first
+unless `regions: false`, which is what makes the fold-all button appear; highlighting then
+colors each part on its own rather than replacing the block and flattening the folds.
 
 `upgradeMermaidFences(container)` then `renderDiagrams(container)` — mermaid is imported only
 when a diagram exists, is themed from the CSS custom properties, and is redrawn on a theme

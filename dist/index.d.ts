@@ -1,4 +1,4 @@
-export { bindCodeActions, enhanceCodeBlocks, highlightAll, type CodeOptions } from "./code.js";
+export { bindCodeActions, enhanceCodeBlocks, foldCodeRegions, highlightAll, type CodeOptions } from "./code.js";
 export { bindAnchorLinks, markExternalLinks, wrapTables } from "./content.js";
 export { isExternalHref, revealInPanel, scrollParent, throttle } from "./dom.js";
 export { bindLightbox, createLightbox, markZoomable, type Lightbox } from "./lightbox.js";
