@@ -57,7 +57,10 @@ export function applySettings(s, root = document.documentElement) {
         root.dataset.theme = s.theme;
     root.dataset.contentFont = s.contentFont;
     root.style.setProperty("--font-size", `${s.fontSize}px`);
-    root.style.setProperty("--content-width", `${s.contentWidth}ch`);
+    if (s.contentWidth == null)
+        root.style.removeProperty("--content-width");
+    else
+        root.style.setProperty("--content-width", `${s.contentWidth}ch`);
     root.classList.toggle("mdr-no-page-markers", !s.pageMarkers);
 }
 // Calls back whenever the OS theme flips, but only while the setting is "system".

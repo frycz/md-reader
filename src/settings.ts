@@ -9,7 +9,9 @@ export type Settings = {
   theme: Theme;
   contentFont: ContentFont;
   fontSize: number;
-  contentWidth: number;
+  // A number of `ch`, or null when the host fixes the width in its own stylesheet and the
+  // reader should keep its hands off --content-width.
+  contentWidth: number | null;
   tocDepth: number;
   pageMarkers: boolean;
   frontmatterExpanded: boolean;
@@ -75,7 +77,8 @@ export function applySettings(s: Settings, root: HTMLElement = document.document
   else root.dataset.theme = s.theme;
   root.dataset.contentFont = s.contentFont;
   root.style.setProperty("--font-size", `${s.fontSize}px`);
-  root.style.setProperty("--content-width", `${s.contentWidth}ch`);
+  if (s.contentWidth == null) root.style.removeProperty("--content-width");
+  else root.style.setProperty("--content-width", `${s.contentWidth}ch`);
   root.classList.toggle("mdr-no-page-markers", !s.pageMarkers);
 }
 

@@ -8,5 +8,6 @@ export type Lightbox = {
 export declare function createLightbox(opts?: {
     parent?: HTMLElement;
 }): Lightbox;
+export declare function markZoomable(container: HTMLElement): void;
 export declare function bindLightbox(container: HTMLElement, lb: Lightbox): () => void;
 //# sourceMappingURL=lightbox.d.ts.map

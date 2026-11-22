@@ -1,7 +1,7 @@
 export { bindCodeActions, enhanceCodeBlocks, highlightAll, type CodeOptions } from "./code.js";
 export { bindAnchorLinks, markExternalLinks, wrapTables } from "./content.js";
 export { isExternalHref, revealInPanel, scrollParent, throttle } from "./dom.js";
-export { bindLightbox, createLightbox, type Lightbox } from "./lightbox.js";
+export { bindLightbox, createLightbox, markZoomable, type Lightbox } from "./lightbox.js";
 export { renderDiagrams, upgradeMermaidFences } from "./mermaid.js";
 export { mountReader, type MountOptions, type Reader } from "./mount.js";
 export { ALL_FIELDS, bindPopover, createSettingsPanel, type SettingsField, type SettingsPanel, } from "./settings-panel.js";

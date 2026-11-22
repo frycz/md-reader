@@ -1,7 +1,6 @@
 /* Reader chrome: table of contents, popovers, buttons, lightbox.
    Everything here is class based so a host can place it in whatever layout it already has.
-   Positioning of the rail itself (`.mdr-toc`) is the host's job, because that is exactly
-   where two hosts differ. */
+   This file styles the contents of the rail; layout.css positions the rail itself. */
 
 /* ---------- table of contents ---------- */
 

@@ -4,7 +4,7 @@ export type Settings = {
     theme: Theme;
     contentFont: ContentFont;
     fontSize: number;
-    contentWidth: number;
+    contentWidth: number | null;
     tocDepth: number;
     pageMarkers: boolean;
     frontmatterExpanded: boolean;

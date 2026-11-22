@@ -56,11 +56,18 @@ export function createLightbox(opts: { parent?: HTMLElement } = {}): Lightbox {
   };
 }
 
-// Images and diagrams inside a link keep their link behavior.
-export function bindLightbox(container: HTMLElement, lb: Lightbox): () => void {
+// Marks the images that will open full screen, so only those get the zoom cursor. The click
+// handler below is delegated and needs no help, but a host that replaces its content has to
+// call this again for the images that replaced the old ones.
+export function markZoomable(container: HTMLElement): void {
   for (const img of container.querySelectorAll<HTMLImageElement>("img")) {
     if (!img.closest("a")) img.classList.add("mdr-zoomable");
   }
+}
+
+// Images and diagrams inside a link keep their link behavior.
+export function bindLightbox(container: HTMLElement, lb: Lightbox): () => void {
+  markZoomable(container);
 
   const onClick = (e: Event) => {
     const t = e.target as HTMLElement;

@@ -44,12 +44,18 @@ export function createLightbox(opts = {}) {
         },
     };
 }
-// Images and diagrams inside a link keep their link behavior.
-export function bindLightbox(container, lb) {
+// Marks the images that will open full screen, so only those get the zoom cursor. The click
+// handler below is delegated and needs no help, but a host that replaces its content has to
+// call this again for the images that replaced the old ones.
+export function markZoomable(container) {
     for (const img of container.querySelectorAll("img")) {
         if (!img.closest("a"))
             img.classList.add("mdr-zoomable");
     }
+}
+// Images and diagrams inside a link keep their link behavior.
+export function bindLightbox(container, lb) {
+    markZoomable(container);
     const onClick = (e) => {
         const t = e.target;
         if (t.closest("a"))

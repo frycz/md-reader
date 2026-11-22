@@ -1,6 +1,6 @@
 // The settings popover. Hosts pick which fields they expose; the panel reports patches and
 // never writes to storage or to the document itself.
-import { CONTENT_WIDTH_RANGE, FONT_SIZE_RANGE } from "./settings.js";
+import { CONTENT_WIDTH_RANGE, DEFAULT_SETTINGS, FONT_SIZE_RANGE } from "./settings.js";
 export const ALL_FIELDS = [
     "theme",
     "contentFont",
@@ -89,9 +89,12 @@ export function createSettingsPanel(opts) {
                 const value = document.createElement("span");
                 control.oninput = () => emit({ contentWidth: Number(control.value) });
                 el.append(labelled("Content width", control, value));
+                // A host that fixes its width in CSS stores null; it should not also list the field,
+                // but fall back to the default rather than putting "null" in the slider if it does.
                 syncs.push((s) => {
-                    control.value = String(s.contentWidth);
-                    value.textContent = `${s.contentWidth}ch`;
+                    const width = s.contentWidth ?? DEFAULT_SETTINGS.contentWidth ?? CONTENT_WIDTH_RANGE.min;
+                    control.value = String(width);
+                    value.textContent = `${width}ch`;
                 });
                 break;
             }

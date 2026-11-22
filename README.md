@@ -25,10 +25,11 @@ committing a change to `src/`.
 import "md-reader/styles/tokens.css";   // custom properties, three theme states
 import "md-reader/styles/markdown.css"; // everything inside .markdown-body
 import "md-reader/styles/reader.css";   // table of contents, popovers, buttons, lightbox
+import "md-reader/styles/layout.css";   // the header bar, the column grid, the rails
 import "md-reader/styles/base.css";     // optional page reset, skip it if the host has its own
 ```
 
-or `md-reader/styles/all.css` for the first three.
+or `md-reader/styles/all.css` for the first four.
 
 Put the rendered markdown in an element with `class="markdown-body"`.
 
@@ -42,14 +43,44 @@ no `data-theme` on `:root` follows the OS
 
 `data-theme="dark"` is always dark
 
+### Layout
+
+`layout.css` is the grid both hosts read in. The rail is a grid column, not something floated
+into the margin, so the text column shrinks to make room instead of the rail overlapping the
+prose or having to disappear on a narrower window.
+
+```html
+<header class="mdr-header">…</header>
+<div class="mdr-layout" data-sidebar="on">
+  <aside class="mdr-sidebar">…</aside>
+  <main class="mdr-main">
+    <article class="markdown-body">…</article>
+  </main>
+  <aside class="mdr-toc">
+    <div class="mdr-toc-head">Contents</div>
+    <nav class="mdr-toc-list"></nav>
+  </aside>
+</div>
+```
+
+Drop the `.mdr-sidebar` element and the `data-sidebar` attribute for a host that has one
+document and nothing to list. `data-toc="off"` collapses the rail, which is how a host wires
+up a toggle button. The rail goes away on its own below 1100px and the sidebar below 760px.
+
+Widths come from `--content-width`, `--sidebar-w` and `--toc-w`. Every direct child of
+`.mdr-main` is capped at `--content-width` and centred, so an article, a pager and a footer
+all line up on the same edges.
+
 ### What the host still owns
 
-Width and placement. `markdown.css` deliberately sets no width, and `reader.css` styles the
-contents list without positioning the rail, because that is exactly where two hosts differ.
-Set `--content-width` and position `.mdr-toc` in the host's own stylesheet.
+The contents of the header bar, and `--header-h`. A host using `.mdr-header` must set
+`--header-h` to the bar's height: the rails are positioned from that token, and so is the
+scroll margin that keeps an anchored heading from landing underneath the bar.
 
-A host with a sticky header should set `--header-h` to its height so anchored headings do not
-land underneath it.
+A host that fixes its text width in its own stylesheet rather than letting the reader set it
+should store `contentWidth: null`, so `applySettings` leaves `--content-width` alone instead
+of stamping a `ch` value over it, and should leave `contentWidth` out of the settings panel's
+fields.
 
 ## One-call setup
 
