@@ -1,0 +1,18 @@
+/* Optional page reset. A host that already has its own base styles should skip this file —
+   `box-sizing: border-box` in particular can shift an existing layout. */
+
+* { box-sizing: border-box; }
+
+html { background: var(--bg); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-ui);
+}
+
+button,
+input,
+select,
+textarea { font: inherit; color: inherit; }

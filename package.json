@@ -1,0 +1,33 @@
+{
+  "name": "md-reader",
+  "version": "0.1.0",
+  "description": "Shared reading layer for rendered markdown: theme tokens, a markdown stylesheet, and DOM post-processors for table of contents, code blocks, mermaid and a lightbox.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles/*.css": "./styles/*.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "styles",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "highlight.js": "^11.12.0",
+    "mermaid": "^11.12.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

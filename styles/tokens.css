@@ -1,0 +1,132 @@
+/* Design tokens. Three theme states are supported:
+   - no data-theme on :root  -> follow the OS (prefers-color-scheme)
+   - data-theme="light"      -> always light
+   - data-theme="dark"       -> always dark
+
+   The dark values are written twice on purpose. CSS has no way to share a block between a media
+   query and an attribute selector, and light-dark() would leave older browsers with no value at
+   all rather than a readable fallback. */
+
+:root {
+  /* Reader metrics. A host that has its own sticky header sets --header-h so that headings
+     scrolled to by anchor do not hide underneath it. */
+  --font-size: 17px;
+  --content-width: 75ch;
+  --header-h: 0px;
+
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SF Mono", "SFMono-Regular", "JetBrains Mono", Menlo, Monaco, Consolas, ui-monospace, monospace;
+  --font-body: var(--font-ui);
+
+  /* Swatch dots: the saturated version of each highlight, readable in both themes. */
+  --ann-dot-yellow: #facc15;
+  --ann-dot-green: #4ade80;
+  --ann-dot-blue: #60a5fa;
+  --ann-dot-pink: #f472b6;
+
+  /* Light */
+  color-scheme: light;
+  --bg: #fbfbf9;
+  --bg-elev: #f2f2ef;
+  --bg-code: #f0f0ec;
+  --fg: #2b2d31;
+  --fg-strong: #111214;
+  --fg-muted: #6b6f78;
+  --border: #e1e1dc;
+  --accent: #2557c7;
+  --accent-bg: rgba(37, 87, 199, 0.1);
+  --mark-bg: rgba(250, 204, 21, 0.4);
+  --hit-bg: rgba(250, 140, 21, 0.5);
+  --selection-bg: #bcd3ff;
+  --selection-fg: #0a0c0f;
+  --hl-keyword: #8a3ab9;
+  --hl-string: #2e7d32;
+  --hl-number: #c2410c;
+  --hl-comment: #8a8f98;
+  --hl-title: #1d4ed8;
+  --hl-attr: #a16207;
+  --hl-built: #0e7490;
+  --ann-yellow: rgba(250, 204, 21, 0.4);
+  --ann-green: rgba(34, 197, 94, 0.22);
+  --ann-blue: rgba(59, 130, 246, 0.18);
+  --ann-pink: rgba(236, 72, 153, 0.18);
+  --ann-fade: #a3a7af;
+  --ann-comment: #2557c7;
+  --ann-danger: #b91c1c;
+}
+
+:root[data-content-font="mono"] {
+  --font-body: var(--font-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #16181d;
+    --bg-elev: #1d2027;
+    --bg-code: #20242c;
+    --fg: #d8dbe2;
+    --fg-strong: #f1f3f7;
+    --fg-muted: #8b919e;
+    --border: #2c313b;
+    --accent: #7aa7ff;
+    --accent-bg: rgba(122, 167, 255, 0.14);
+    --mark-bg: rgba(250, 204, 21, 0.28);
+    --hit-bg: rgba(250, 160, 21, 0.55);
+    --selection-bg: #2a3650;
+    --selection-fg: #eef2f7;
+    --hl-keyword: #c792ea;
+    --hl-string: #a5d6a7;
+    --hl-number: #f78c6c;
+    --hl-comment: #6b7280;
+    --hl-title: #82aaff;
+    --hl-attr: #ffcb6b;
+    --hl-built: #89ddff;
+    /* Alpha is per color, not shared: the four are balanced to the same composited luminance, so
+       they read as equally present. Brightening costs contrast here, because the highlight moves
+       toward the light body text, so these stop where body text still clears 4.5:1. */
+    --ann-yellow: rgba(250, 204, 21, 0.38);
+    --ann-green: rgba(74, 222, 128, 0.4);
+    --ann-blue: rgba(96, 165, 250, 0.48);
+    --ann-pink: rgba(244, 114, 182, 0.46);
+    --ann-fade: #6b7280;
+    --ann-comment: #7aa7ff;
+    --ann-danger: #f87171;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #16181d;
+  --bg-elev: #1d2027;
+  --bg-code: #20242c;
+  --fg: #d8dbe2;
+  --fg-strong: #f1f3f7;
+  --fg-muted: #8b919e;
+  --border: #2c313b;
+  --accent: #7aa7ff;
+  --accent-bg: rgba(122, 167, 255, 0.14);
+  --mark-bg: rgba(250, 204, 21, 0.28);
+  --hit-bg: rgba(250, 160, 21, 0.55);
+  --selection-bg: #2a3650;
+  --selection-fg: #eef2f7;
+  --hl-keyword: #c792ea;
+  --hl-string: #a5d6a7;
+  --hl-number: #f78c6c;
+  --hl-comment: #6b7280;
+  --hl-title: #82aaff;
+  --hl-attr: #ffcb6b;
+  --hl-built: #89ddff;
+  --ann-yellow: rgba(250, 204, 21, 0.38);
+  --ann-green: rgba(74, 222, 128, 0.4);
+  --ann-blue: rgba(96, 165, 250, 0.48);
+  --ann-pink: rgba(244, 114, 182, 0.46);
+  --ann-fade: #6b7280;
+  --ann-comment: #7aa7ff;
+  --ann-danger: #f87171;
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-fg);
+}

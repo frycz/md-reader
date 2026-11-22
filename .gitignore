@@ -1,0 +1,6 @@
+node_modules/
+*.log
+.DS_Store
+
+# dist/ is committed on purpose: this package is consumed as a git dependency,
+# so installs must not need a build step. Run `npm run build` before committing.

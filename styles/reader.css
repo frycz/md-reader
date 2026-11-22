@@ -1,0 +1,136 @@
+/* Reader chrome: table of contents, popovers, buttons, lightbox.
+   Everything here is class based so a host can place it in whatever layout it already has.
+   Positioning of the rail itself (`.mdr-toc`) is the host's job, because that is exactly
+   where two hosts differ. */
+
+/* ---------- table of contents ---------- */
+
+.mdr-toc-head {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+  margin: 0 0 8px 8px;
+}
+
+.mdr-toc-list {
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  line-height: 1.35;
+}
+
+.mdr-toc-list a {
+  display: block;
+  padding: 3px 8px;
+  border-left: 2px solid transparent;
+  color: var(--fg-muted);
+  text-decoration: none;
+}
+.mdr-toc-list a:hover { color: var(--fg-strong); }
+.mdr-toc-list a.active { color: var(--accent); border-left-color: var(--accent); }
+.mdr-toc-list a.toc-section { color: var(--fg); font-weight: 600; margin-top: 10px; }
+.mdr-toc-list a.toc-lvl-2 { padding-left: 18px; }
+.mdr-toc-list a.toc-lvl-3 { padding-left: 30px; font-size: 12.5px; }
+.mdr-toc-list a.toc-lvl-4 { padding-left: 42px; font-size: 12.5px; }
+.mdr-toc-list a.toc-lvl-5 { padding-left: 54px; font-size: 12px; }
+.mdr-toc-list a.toc-lvl-6 { padding-left: 66px; font-size: 12px; }
+.mdr-toc-empty { padding: 6px 8px; color: var(--fg-muted); font-size: 13px; }
+
+/* ---------- buttons ---------- */
+
+.mdr-icon-btn,
+.mdr-text-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  height: 32px;
+  font-family: var(--font-ui);
+  font-size: 16px;
+}
+.mdr-icon-btn { width: 32px; }
+.mdr-text-btn { padding: 0 10px; font-size: 13px; }
+.mdr-icon-btn:hover,
+.mdr-text-btn:hover { background: var(--bg-elev); color: var(--fg-strong); }
+.mdr-text-btn.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* ---------- popover ---------- */
+
+.mdr-popover-wrap { position: relative; }
+
+.mdr-popover {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  z-index: 30;
+  width: 260px;
+  padding: 14px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--fg);
+  text-align: left;
+}
+.mdr-popover[hidden] { display: none; }
+.mdr-popover label { display: flex; flex-direction: column; gap: 4px; color: var(--fg); }
+.mdr-popover label span { color: var(--fg-muted); }
+.mdr-popover select {
+  font: inherit;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+.mdr-popover input[type="range"] { accent-color: var(--accent); }
+.mdr-popover label.mdr-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.mdr-popover label.mdr-check input { accent-color: var(--accent); margin: 0; }
+
+/* ---------- lightbox ---------- */
+
+.mdr-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  cursor: zoom-out;
+}
+.mdr-lightbox[hidden] { display: none; }
+.mdr-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 4px;
+}
+.mdr-lightbox .mdr-lb-svg {
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 16px;
+}
+.mdr-lightbox[data-kind="svg"] img,
+.mdr-lightbox[data-kind="img"] .mdr-lb-svg { display: none; }
+/* Mermaid sets an inline max-width from the diagram's natural size; the lightbox scales past it. */
+.mdr-lightbox .mdr-lb-svg svg { width: 100%; height: 100%; max-width: none !important; }
