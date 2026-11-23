@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>md-reader</title>
+<meta name="description" content="md-reader, shown by reading its own documentation: theme tokens, markdown styles, code blocks, diagrams, contents rail and lightbox.">
+<!-- The output of themeBootstrap("md-reader-showcase"): the saved theme lands before the first paint. -->
+<script>(function(){try{var r=document.documentElement,s=JSON.parse(localStorage.getItem("md-reader-showcase")||"{}");if(s.theme==="dark"||s.theme==="light")r.setAttribute("data-theme",s.theme);if(s.contentFont)r.setAttribute("data-content-font",s.contentFont);if(typeof s.fontSize==="number")r.style.setProperty("--font-size",s.fontSize+"px");if(typeof s.contentWidth==="number")r.style.setProperty("--content-width",s.contentWidth+"ch");if(s.pageMarkers===false)r.classList.add("mdr-no-page-markers");}catch(e){}})()</script>
+<link rel="stylesheet" href="styles/all.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="site/site.css">
+<!-- dist/ imports its two heavy dependencies by package name, and only when a page needs them. -->
+<script type="importmap">
+{
+  "imports": {
+    "highlight.js/lib/common": "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/es/highlight.min.js",
+    "mermaid": "https://cdn.jsdelivr.net/npm/mermaid@11.12.0/dist/mermaid.esm.min.mjs"
+  }
+}
+</script>
+<script type="module" src="site/site.js"></script>
+</head>
+<body>
+<header class="mdr-header">
+  <a class="site-brand" href="./">md-reader</a>
+  <span class="mdr-header-title" id="page-title"></span>
+  <nav class="site-pages" aria-label="Pages"></nav>
+  <span class="mdr-spacer"></span>
+  <button class="mdr-text-btn active" id="toc-btn" type="button" hidden>Contents</button>
+  <div class="mdr-popover-wrap">
+    <button class="mdr-icon-btn" id="settings-btn" type="button" aria-label="Reader settings" title="Reader settings">⚙</button>
+  </div>
+  <a class="mdr-text-btn site-link" href="https://github.com/frycz/md-reader">GitHub</a>
+</header>
+<div class="mdr-layout" data-sidebar="on">
+  <aside class="mdr-sidebar">
+    <nav class="site-nav" aria-label="Pages"></nav>
+    <p class="site-note">This site is a host of its own: <a href="https://github.com/frycz/md-reader/blob/main/index.html">index.html</a> and <a href="https://github.com/frycz/md-reader/blob/main/site/site.js">site/site.js</a> render markdown with markdown-it and hand it to <code>mountReader</code>.</p>
+  </aside>
+  <main class="mdr-main">
+    <article class="markdown-body" id="doc"></article>
+  </main>
+  <aside class="mdr-toc">
+    <div class="mdr-toc-head">Contents</div>
+    <nav class="mdr-toc-list"></nav>
+  </aside>
+</div>
+</body>
+</html>

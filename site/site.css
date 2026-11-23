@@ -1,0 +1,124 @@
+/* The showcase host's own styles: the bar's contents and the sidebar's links. md-reader leaves
+   both to the host, so this is the part another host would write differently. */
+
+:root {
+  --header-h: 52px;
+}
+
+.site-brand {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg-strong);
+  text-decoration: none;
+  padding: 0 6px;
+}
+
+.mdr-header-title::before {
+  content: "/ ";
+  color: var(--fg-muted);
+  font-weight: 400;
+}
+
+a.mdr-text-btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+/* ---------- sidebar ---------- */
+
+.site-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.site-nav a {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--fg);
+  text-decoration: none;
+}
+.site-nav a small {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--fg-muted);
+}
+.site-nav a:hover {
+  background: var(--bg-elev);
+}
+.site-nav a[aria-current="page"] {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.site-note {
+  margin: 24px 10px 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+.site-note a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.site-note code {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+}
+
+/* ---------- narrow screens ---------- */
+
+/* grid.css drops the sidebar below 760px, so the page links move into the bar. */
+.site-pages {
+  display: none;
+  gap: 2px;
+}
+.site-pages a {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--fg-muted);
+  text-decoration: none;
+}
+.site-pages a[aria-current="page"] {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+@media (max-width: 760px) {
+  .site-pages {
+    display: flex;
+  }
+  .mdr-header-title,
+  .site-link {
+    display: none;
+  }
+}
+
+/* ---------- tokens page ---------- */
+
+.swatch {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.4em;
+  vertical-align: -0.2em;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--c);
+}
+
+.type-sample {
+  display: block;
+  margin: 0.3em 0 0;
+  font-size: 1.15em;
+  color: var(--fg-strong);
+}
