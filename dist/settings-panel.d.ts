@@ -1,5 +1,4 @@
-import { type Settings } from "./settings.js";
-export type SettingsField = keyof Settings;
+import { type Settings, type SettingsField } from "./settings.js";
 export declare const ALL_FIELDS: SettingsField[];
 export type SettingsPanel = {
     el: HTMLElement;

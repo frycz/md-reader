@@ -16,8 +16,17 @@ export const CONTENT_WIDTH_RANGE = { min: 50, max: 140, step: 5 };
 // full, or blocked outright (private windows, cleared site data).
 export function createSettingsStore(opts) {
     const defaults = { ...DEFAULT_SETTINGS, ...opts.defaults };
+    const fields = opts.persist ?? Object.keys(defaults);
+    const pick = (s) => {
+        const out = {};
+        for (const f of fields)
+            if (s[f] !== undefined)
+                out[f] = s[f];
+        return out;
+    };
     return {
         key: opts.key,
+        fields,
         load() {
             try {
                 const raw = localStorage.getItem(opts.key);
@@ -26,7 +35,9 @@ export function createSettingsStore(opts) {
                 const parsed = JSON.parse(raw);
                 if (!parsed || typeof parsed !== "object" || Array.isArray(parsed))
                     return { ...defaults };
-                return { ...defaults, ...parsed };
+                // Only the stored fields are taken, so an older stored shape cannot bring back a
+                // setting the host has since stopped keeping.
+                return { ...defaults, ...pick(parsed) };
             }
             catch {
                 return { ...defaults };
@@ -34,7 +45,7 @@ export function createSettingsStore(opts) {
         },
         save(s) {
             try {
-                localStorage.setItem(opts.key, JSON.stringify(s));
+                localStorage.setItem(opts.key, JSON.stringify(pick(s)));
             }
             catch { }
         },

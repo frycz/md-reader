@@ -9,6 +9,7 @@ export type Settings = {
     pageMarkers: boolean;
     frontmatterExpanded: boolean;
 };
+export type SettingsField = keyof Settings;
 export declare const DEFAULT_SETTINGS: Settings;
 export declare const FONT_SIZE_RANGE: {
     readonly min: 13;
@@ -24,10 +25,12 @@ export type SettingsStore = {
     load(): Settings;
     save(s: Settings): void;
     key: string;
+    fields: readonly SettingsField[];
 };
 export declare function createSettingsStore(opts: {
     key: string;
     defaults?: Partial<Settings>;
+    persist?: readonly SettingsField[];
 }): SettingsStore;
 export declare function prefersDark(): boolean;
 export declare function resolvedTheme(root?: HTMLElement): "dark" | "light";

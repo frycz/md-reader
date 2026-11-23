@@ -13,9 +13,15 @@ export type Settings = {
   // reader should keep its hands off --content-width.
   contentWidth: number | null;
   tocDepth: number;
+  // The last two describe markup only some hosts produce: page dividers and a metadata block.
+  // applySettings puts `pageMarkers` on the document as a class for the host's own stylesheet
+  // to honour, and does nothing at all with `frontmatterExpanded`. A host without that markup
+  // leaves both out of its settings panel and never looks at them.
   pageMarkers: boolean;
   frontmatterExpanded: boolean;
 };
+
+export type SettingsField = keyof Settings;
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: "system",
@@ -34,28 +40,49 @@ export type SettingsStore = {
   load(): Settings;
   save(s: Settings): void;
   key: string;
+  // The fields this store actually keeps.
+  fields: readonly SettingsField[];
 };
 
 // All localStorage access goes through here, so a reader works when storage is empty,
 // full, or blocked outright (private windows, cleared site data).
-export function createSettingsStore(opts: { key: string; defaults?: Partial<Settings> }): SettingsStore {
+export function createSettingsStore(opts: {
+  key: string;
+  defaults?: Partial<Settings>;
+  // The fields that are written, and the only ones read back. A host whose reader exposes one
+  // setting should name just that one: storing the rest would strand a returning visitor on
+  // whatever the defaults were the day they last read something, and would hand themeBootstrap
+  // stale values to stamp on the document before the page paints. Defaults to every field.
+  persist?: readonly SettingsField[];
+}): SettingsStore {
   const defaults: Settings = { ...DEFAULT_SETTINGS, ...opts.defaults };
+  const fields = opts.persist ?? (Object.keys(defaults) as SettingsField[]);
+
+  const pick = (s: Partial<Settings>): Partial<Settings> => {
+    const out: Record<string, unknown> = {};
+    for (const f of fields) if (s[f] !== undefined) out[f] = s[f];
+    return out as Partial<Settings>;
+  };
+
   return {
     key: opts.key,
+    fields,
     load() {
       try {
         const raw = localStorage.getItem(opts.key);
         if (!raw) return { ...defaults };
         const parsed = JSON.parse(raw) as unknown;
         if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return { ...defaults };
-        return { ...defaults, ...(parsed as Partial<Settings>) };
+        // Only the stored fields are taken, so an older stored shape cannot bring back a
+        // setting the host has since stopped keeping.
+        return { ...defaults, ...pick(parsed as Partial<Settings>) };
       } catch {
         return { ...defaults };
       }
     },
     save(s: Settings) {
       try {
-        localStorage.setItem(opts.key, JSON.stringify(s));
+        localStorage.setItem(opts.key, JSON.stringify(pick(s)));
       } catch {}
     },
   };

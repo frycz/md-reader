@@ -1,5 +1,7 @@
-/* Everything except base.css, which is opt-in. */
+/* The full default stack: everything except base.css, which is opt-in.
+   A host that writes its own column grid imports the first four and skips grid.css. */
 @import "./tokens.css";
 @import "./markdown.css";
 @import "./reader.css";
 @import "./layout.css";
+@import "./grid.css";

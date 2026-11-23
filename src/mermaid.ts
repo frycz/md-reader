@@ -59,7 +59,7 @@ function themeVariables() {
   const dark = resolvedTheme() === "dark";
   // Categorical colors for pie slices and scale-based diagrams (journey, timeline, mindmap), taken from
   // the syntax highlighting palette so they are tuned per theme. Labels on them use the opposite tone.
-  const palette = ["--hl-title", "--hl-string", "--hl-attr", "--hl-keyword", "--hl-number", "--hl-built", "--ann-dot-pink", "--fg-muted"].map(v);
+  const palette = ["--hl-title", "--hl-string", "--hl-attr", "--hl-keyword", "--hl-number", "--hl-built", "--hl-pink", "--fg-muted"].map(v);
   const onPalette = dark ? v("--bg") : "#ffffff";
   const scale: Record<string, string> = {};
   palette.forEach((c, i) => {

@@ -1,23 +1,19 @@
-/* The reading layout both hosts use: a text column with a contents rail beside it, and
-   optionally a navigation sidebar in front of them.
+/* The reading chrome both hosts share: the header bar, the text column's padding and width, and
+   the two rails as sticky, independently scrolling panels.
 
-   The rail is a real grid column rather than something floated into the margin. That is the
-   whole point of this file: the text column shrinks to make room, so the rail can never
-   overlap the prose and never has to vanish just because the window is not wide enough to
-   hold a fixed column plus a fixed rail.
+   What is *not* here is the grid that places them — that is grid.css, which a host can skip and
+   write itself. This file assumes only that the rails and the column live in some grid called
+   .mdr-layout, and never says which track each one goes in.
 
-   Column widths live in custom properties, so a toggle or a media query changes one value
-   instead of rewriting the template. */
+   A host that uses .mdr-header must set --header-h to the bar's real height: the rails are
+   positioned from that token, markdown.css keeps an anchored heading out from under it, and
+   headerOffset() reads it to decide when a heading counts as current. */
 
 /* ---------- header ---------- */
 
-/* The bar above the layout. What goes in it is the host's business — view-md puts its file
-   and document controls there, the blog its site navigation — but the box, the height and
-   the way it floats over scrolling content are the same in both.
-
-   A host that uses it must set --header-h to the bar's height: the rails are positioned
-   from that token, and so is the scroll margin that keeps an anchored heading out from
-   underneath it. */
+/* What goes in the bar is the host's business — view-md puts its file and document controls
+   there, the blog its site navigation — but the box, the height and the way it floats over
+   scrolling content are the same in both. */
 .mdr-header {
   position: sticky;
   top: 0;
@@ -49,51 +45,37 @@
   flex: 1;
 }
 
-/* ---------- layout ---------- */
+/* ---------- the page below the bar ---------- */
 
 .mdr-layout {
-  /* No sidebar and a visible rail: what a host with a single document wants. */
-  --mdr-col-sidebar: 0px;
-  --mdr-col-toc: var(--toc-w);
-
-  display: grid;
-  grid-template-columns: var(--mdr-col-sidebar) minmax(0, 1fr) var(--mdr-col-toc);
   min-height: calc(100svh - var(--header-h));
 }
 
-.mdr-layout[data-sidebar="on"] {
-  --mdr-col-sidebar: var(--sidebar-w);
-}
-.mdr-layout[data-toc="off"] {
-  --mdr-col-toc: 0px;
-}
+/* ---------- the text column ---------- */
 
-/* A rail that is absent, or that the host hid because the document has nothing worth listing,
-   should not leave its column behind as an empty gutter. This is what lets a host drop the
-   rail element on pages that have no contents and say nothing else about it. */
-.mdr-layout:not(:has(> .mdr-toc:not([hidden]))) {
-  --mdr-col-toc: 0px;
-}
-
-/* A zero-width column still lays its contents out, so the element itself has to go. */
-.mdr-layout:not([data-sidebar="on"]) > .mdr-sidebar,
-.mdr-layout[data-toc="off"] > .mdr-toc {
-  display: none;
-}
-
-.mdr-sidebar {
-  grid-column: 1;
-}
 .mdr-main {
-  grid-column: 2;
-  /* Without this a wide code block or table stretches the column past its 1fr share. */
+  /* Without this a wide code block or table stretches the column past its share of the grid. */
   min-width: 0;
-}
-.mdr-toc {
-  grid-column: 3;
+  padding: 32px 40px 80px;
 }
 
-/* Both rails scroll on their own and stay put under a sticky header. */
+/* The text is centred in whatever width the column has. Every direct child gets the same width
+   and the same edges, so an article, a pager and a footer all line up. */
+.mdr-main > * {
+  max-width: var(--content-width);
+  margin-inline: auto;
+}
+
+/* Narrow enough that the article needs the whole window. */
+@media (max-width: 760px) {
+  .mdr-main {
+    padding: 20px 16px 60px;
+  }
+}
+
+/* ---------- the rails ---------- */
+
+/* Both scroll on their own and stay put under the sticky bar. */
 .mdr-sidebar,
 .mdr-toc {
   position: sticky;
@@ -107,41 +89,8 @@
   border-right: 1px solid var(--border);
   padding: 12px 8px 24px;
 }
+
 .mdr-toc {
   border-left: 1px solid var(--border);
   padding: 16px 12px 24px;
-}
-
-.mdr-main {
-  padding: 32px 40px 80px;
-}
-
-/* The text column is centred in whatever space the rails leave. Every direct child gets the
-   same width and the same edges, so an article, a pager and a footer all line up. */
-.mdr-main > * {
-  max-width: var(--content-width);
-  margin-inline: auto;
-}
-
-/* Below this the rail costs the article more width than it gives back in navigation. */
-@media (max-width: 1100px) {
-  .mdr-layout {
-    --mdr-col-toc: 0px;
-  }
-  .mdr-layout > .mdr-toc {
-    display: none;
-  }
-}
-
-/* Narrow enough that the article needs the whole window. */
-@media (max-width: 760px) {
-  .mdr-layout[data-sidebar="on"] {
-    --mdr-col-sidebar: 0px;
-  }
-  .mdr-layout > .mdr-sidebar {
-    display: none;
-  }
-  .mdr-main {
-    padding: 20px 16px 60px;
-  }
 }

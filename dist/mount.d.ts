@@ -6,6 +6,8 @@ export type MountOptions = {
     tocList?: HTMLElement | null;
     tocDepth?: number;
     offset?: () => number;
+    scrollTo?: (el: HTMLElement, id: string) => void;
+    ignore?: string;
     code?: CodeOptions | false;
     mermaid?: boolean;
     lightbox?: boolean;

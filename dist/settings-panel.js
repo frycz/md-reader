@@ -1,6 +1,6 @@
 // The settings popover. Hosts pick which fields they expose; the panel reports patches and
 // never writes to storage or to the document itself.
-import { CONTENT_WIDTH_RANGE, DEFAULT_SETTINGS, FONT_SIZE_RANGE } from "./settings.js";
+import { CONTENT_WIDTH_RANGE, DEFAULT_SETTINGS, FONT_SIZE_RANGE, } from "./settings.js";
 export const ALL_FIELDS = [
     "theme",
     "contentFont",

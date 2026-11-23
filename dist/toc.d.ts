@@ -1,6 +1,7 @@
 export declare function assignHeadingIds(container: HTMLElement, opts?: {
     prefix?: string;
     selector?: string;
+    ignore?: string;
 }): void;
 export type TocSection = {
     id: string;
@@ -13,6 +14,7 @@ export type TocOptions = {
     offset?: () => number;
     sectionSelector?: string;
     sectionInfo?: (el: HTMLElement) => TocSection | null;
+    ignore?: string;
     emptyLabel?: string;
     onNavigate?: (id: string) => void;
     scrollTo?: (el: HTMLElement, id: string) => void;
@@ -20,6 +22,7 @@ export type TocOptions = {
 export type Toc = {
     rebuild(depth?: number): void;
     update(): void;
+    count(): number;
     destroy(): void;
 };
 export declare function createToc(opts: TocOptions): Toc;

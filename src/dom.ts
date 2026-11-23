@@ -39,6 +39,15 @@ export function revealInPanel(el: HTMLElement): void {
   else if (r.bottom > p.bottom) panel.scrollTop += r.bottom - p.bottom + 8;
 }
 
+// The distance from the top of the viewport at which a heading counts as current: the height of
+// the host's sticky bar, plus some breathing room. --header-h is the one place that height is
+// written down — layout.css positions the rails from it and markdown.css keeps an anchored
+// heading out from under it — so it is read here rather than measured or repeated.
+export function headerOffset(extra = 24, root: HTMLElement = document.documentElement): number {
+  const h = parseFloat(getComputedStyle(root).getPropertyValue("--header-h"));
+  return (Number.isFinite(h) ? h : 0) + extra;
+}
+
 export function isExternalHref(href: string): boolean {
   return /^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith("//");
 }

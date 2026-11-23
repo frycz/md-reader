@@ -27,7 +27,8 @@ export function markExternalLinks(container, opts = {}) {
 export function bindAnchorLinks(container, opts = {}) {
     const onClick = (e) => {
         const mouse = e;
-        if (mouse.metaKey || mouse.ctrlKey || mouse.button !== 0)
+        // A modified click is the reader asking for a new tab or window: leave it to the browser.
+        if (mouse.metaKey || mouse.ctrlKey || mouse.shiftKey || mouse.altKey || mouse.button !== 0)
             return;
         const a = e.target.closest("a[href^='#']");
         if (!a || !container.contains(a))

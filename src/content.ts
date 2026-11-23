@@ -31,7 +31,8 @@ export function bindAnchorLinks(
 ): () => void {
   const onClick = (e: Event) => {
     const mouse = e as MouseEvent;
-    if (mouse.metaKey || mouse.ctrlKey || mouse.button !== 0) return;
+    // A modified click is the reader asking for a new tab or window: leave it to the browser.
+    if (mouse.metaKey || mouse.ctrlKey || mouse.shiftKey || mouse.altKey || mouse.button !== 0) return;
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>("a[href^='#']");
     if (!a || !container.contains(a)) return;
     const href = a.getAttribute("href") ?? "";

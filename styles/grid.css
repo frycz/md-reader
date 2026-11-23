@@ -1,0 +1,77 @@
+/* The default column grid: a text column that fills the window, with a contents rail beside it
+   and optionally a navigation sidebar in front of them.
+
+   The rails are real grid columns rather than things floated into the margin. That is the point
+   of this file: the text column shrinks to make room, so a rail can never overlap the prose and
+   never has to vanish just because the window is not wide enough to hold a fixed column plus a
+   fixed rail. A collapsed rail gives its width back to the text.
+
+   This file is optional, and it is the one part of md-reader a host is expected to replace
+   rather than override. A host that wants a different shape — text and rail centred together as
+   one block, say, or a rail that fades closed instead of snapping — skips this import and writes
+   its own template against .mdr-layout. Everything it then needs is still shared: layout.css for
+   the bar, the column padding and the sticky rails, reader.css for what is inside them, and the
+   --toc-w / --sidebar-w / --content-width tokens to measure with.
+
+   What a host that replaces this file owes: a `grid-column` for .mdr-main and .mdr-toc (and
+   .mdr-sidebar if it has one), and some way for the rail's track to reach zero when the host has
+   nothing to list. */
+
+.mdr-layout {
+  /* No sidebar and a visible rail: what a host with a single document wants. */
+  --mdr-col-sidebar: 0px;
+  --mdr-col-toc: var(--toc-w);
+
+  display: grid;
+  grid-template-columns: var(--mdr-col-sidebar) minmax(0, 1fr) var(--mdr-col-toc);
+}
+
+.mdr-layout[data-sidebar="on"] {
+  --mdr-col-sidebar: var(--sidebar-w);
+}
+.mdr-layout[data-toc="off"] {
+  --mdr-col-toc: 0px;
+}
+
+/* A rail that is absent, or that the host hid because the document has nothing worth listing,
+   should not leave its column behind as an empty gutter. This is what lets a host drop the
+   rail element on pages that have no contents and say nothing else about it. */
+.mdr-layout:not(:has(> .mdr-toc:not([hidden]))) {
+  --mdr-col-toc: 0px;
+}
+
+/* A zero-width column still lays its contents out, so the element itself has to go. */
+.mdr-layout:not([data-sidebar="on"]) > .mdr-sidebar,
+.mdr-layout[data-toc="off"] > .mdr-toc {
+  display: none;
+}
+
+.mdr-sidebar {
+  grid-column: 1;
+}
+.mdr-main {
+  grid-column: 2;
+}
+.mdr-toc {
+  grid-column: 3;
+}
+
+/* Below this the rail costs the article more width than it gives back in navigation. */
+@media (max-width: 1100px) {
+  .mdr-layout {
+    --mdr-col-toc: 0px;
+  }
+  .mdr-layout > .mdr-toc {
+    display: none;
+  }
+}
+
+/* Narrow enough that the article needs the whole window. */
+@media (max-width: 760px) {
+  .mdr-layout[data-sidebar="on"] {
+    --mdr-col-sidebar: 0px;
+  }
+  .mdr-layout > .mdr-sidebar {
+    display: none;
+  }
+}

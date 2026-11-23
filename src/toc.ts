@@ -1,28 +1,26 @@
 // Table of contents built from the headings of an already rendered document, plus the
 // scroll spy that keeps the current one marked.
 
-import { revealInPanel, throttle } from "./dom.js";
-import { slugify } from "./slug.js";
+import { headerOffset, revealInPanel, throttle } from "./dom.js";
+import { createSlugger } from "./slug.js";
 
 const HEADINGS = "h1, h2, h3, h4, h5, h6";
 
 // Markdown rendered at build time often has no heading ids (gatsby-transformer-remark emits
 // none), so the reader assigns them with the same slug rule the renderer would have used.
 // Headings that already have an id keep it.
-export function assignHeadingIds(container: HTMLElement, opts: { prefix?: string; selector?: string } = {}): void {
-  const prefix = opts.prefix ?? "";
-  const seen = new Map<string, number>();
+export function assignHeadingIds(
+  container: HTMLElement,
+  // `ignore` is a selector for the parts of the document the host does not count as prose — a
+  // collapsed metadata block, say. A heading inside one gets no id, and the same option on
+  // createToc keeps it out of the contents list.
+  opts: { prefix?: string; selector?: string; ignore?: string } = {},
+): void {
+  const slugger = createSlugger({ prefix: opts.prefix });
   for (const h of container.querySelectorAll<HTMLElement>(opts.selector ?? HEADINGS)) {
-    if (h.closest("details.frontmatter")) continue;
-    if (h.id) {
-      seen.set(h.id, (seen.get(h.id) ?? 0) + 1);
-      continue;
-    }
-    let slug = slugify(h.textContent ?? "");
-    const n = seen.get(slug) ?? 0;
-    seen.set(slug, n + 1);
-    if (n > 0) slug = `${slug}-${n}`;
-    h.id = prefix + slug;
+    if (opts.ignore && h.closest(opts.ignore)) continue;
+    if (h.id) slugger.reserve(h.id);
+    else h.id = slugger.slug(h.textContent ?? "");
   }
 }
 
@@ -39,6 +37,9 @@ export type TocOptions = {
   // several files. `sectionInfo` turns such an element into a label and a target id.
   sectionSelector?: string;
   sectionInfo?: (el: HTMLElement) => TocSection | null;
+  // Selector for the parts of the document that are not prose, whose headings stay out of the
+  // list. The same option assignHeadingIds takes.
+  ignore?: string;
   emptyLabel?: string;
   // Called after a TOC link scrolls to its target, so the host can update history.
   onNavigate?: (id: string) => void;
@@ -50,12 +51,15 @@ export type TocOptions = {
 export type Toc = {
   rebuild(depth?: number): void;
   update(): void;
+  // How many entries the list currently holds. A host that gives the rail a column of its own
+  // needs this to decide whether the document has enough to navigate to be worth the width.
+  count(): number;
   destroy(): void;
 };
 
 export function createToc(opts: TocOptions): Toc {
   const { container, list } = opts;
-  const offset = opts.offset ?? (() => 24);
+  const offset = opts.offset ?? (() => headerOffset());
   let depth = opts.depth ?? 3;
   let entries: HTMLElement[] = [];
   let frame = 0;
@@ -73,7 +77,9 @@ export function createToc(opts: TocOptions): Toc {
     if (next !== undefined) depth = next;
     const levels = Array.from({ length: Math.max(1, Math.min(6, depth)) }, (_, i) => `h${i + 1}[id]`).join(",");
     const selector = opts.sectionSelector ? `${levels}, ${opts.sectionSelector}` : levels;
-    entries = [...container.querySelectorAll<HTMLElement>(selector)].filter((h) => !h.closest("details.frontmatter"));
+    entries = [...container.querySelectorAll<HTMLElement>(selector)].filter(
+      (h) => !opts.ignore || !h.closest(opts.ignore),
+    );
 
     list.replaceChildren();
     for (const el of entries) {
@@ -126,7 +132,9 @@ export function createToc(opts: TocOptions): Toc {
     const a = (e.target as HTMLElement).closest<HTMLElement>("a[data-target]");
     if (!a || !list.contains(a)) return;
     const mouse = e as MouseEvent;
-    if (mouse.metaKey || mouse.ctrlKey || mouse.button !== 0) return;
+    // A modified click is the reader asking for a new tab or window, which is the browser's to
+    // handle: the link carries a real href for exactly that.
+    if (mouse.metaKey || mouse.ctrlKey || mouse.shiftKey || mouse.altKey || mouse.button !== 0) return;
     e.preventDefault();
     const id = a.dataset.target!;
     const el = document.getElementById(id);
@@ -144,6 +152,7 @@ export function createToc(opts: TocOptions): Toc {
   return {
     rebuild,
     update,
+    count: () => list.querySelectorAll("a[data-target]").length,
     destroy() {
       cancelAnimationFrame(frame);
       list.removeEventListener("click", onClick);

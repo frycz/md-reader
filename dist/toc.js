@@ -1,32 +1,29 @@
 // Table of contents built from the headings of an already rendered document, plus the
 // scroll spy that keeps the current one marked.
-import { revealInPanel, throttle } from "./dom.js";
-import { slugify } from "./slug.js";
+import { headerOffset, revealInPanel, throttle } from "./dom.js";
+import { createSlugger } from "./slug.js";
 const HEADINGS = "h1, h2, h3, h4, h5, h6";
 // Markdown rendered at build time often has no heading ids (gatsby-transformer-remark emits
 // none), so the reader assigns them with the same slug rule the renderer would have used.
 // Headings that already have an id keep it.
-export function assignHeadingIds(container, opts = {}) {
-    const prefix = opts.prefix ?? "";
-    const seen = new Map();
+export function assignHeadingIds(container, 
+// `ignore` is a selector for the parts of the document the host does not count as prose — a
+// collapsed metadata block, say. A heading inside one gets no id, and the same option on
+// createToc keeps it out of the contents list.
+opts = {}) {
+    const slugger = createSlugger({ prefix: opts.prefix });
     for (const h of container.querySelectorAll(opts.selector ?? HEADINGS)) {
-        if (h.closest("details.frontmatter"))
+        if (opts.ignore && h.closest(opts.ignore))
             continue;
-        if (h.id) {
-            seen.set(h.id, (seen.get(h.id) ?? 0) + 1);
-            continue;
-        }
-        let slug = slugify(h.textContent ?? "");
-        const n = seen.get(slug) ?? 0;
-        seen.set(slug, n + 1);
-        if (n > 0)
-            slug = `${slug}-${n}`;
-        h.id = prefix + slug;
+        if (h.id)
+            slugger.reserve(h.id);
+        else
+            h.id = slugger.slug(h.textContent ?? "");
     }
 }
 export function createToc(opts) {
     const { container, list } = opts;
-    const offset = opts.offset ?? (() => 24);
+    const offset = opts.offset ?? (() => headerOffset());
     let depth = opts.depth ?? 3;
     let entries = [];
     let frame = 0;
@@ -42,7 +39,7 @@ export function createToc(opts) {
             depth = next;
         const levels = Array.from({ length: Math.max(1, Math.min(6, depth)) }, (_, i) => `h${i + 1}[id]`).join(",");
         const selector = opts.sectionSelector ? `${levels}, ${opts.sectionSelector}` : levels;
-        entries = [...container.querySelectorAll(selector)].filter((h) => !h.closest("details.frontmatter"));
+        entries = [...container.querySelectorAll(selector)].filter((h) => !opts.ignore || !h.closest(opts.ignore));
         list.replaceChildren();
         for (const el of entries) {
             const id = targetOf(el);
@@ -98,7 +95,9 @@ export function createToc(opts) {
         if (!a || !list.contains(a))
             return;
         const mouse = e;
-        if (mouse.metaKey || mouse.ctrlKey || mouse.button !== 0)
+        // A modified click is the reader asking for a new tab or window, which is the browser's to
+        // handle: the link carries a real href for exactly that.
+        if (mouse.metaKey || mouse.ctrlKey || mouse.shiftKey || mouse.altKey || mouse.button !== 0)
             return;
         e.preventDefault();
         const id = a.dataset.target;
@@ -118,6 +117,7 @@ export function createToc(opts) {
     return {
         rebuild,
         update,
+        count: () => list.querySelectorAll("a[data-target]").length,
         destroy() {
             cancelAnimationFrame(frame);
             list.removeEventListener("click", onClick);

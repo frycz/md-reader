@@ -13,7 +13,7 @@
   --font-size: 17px;
   --content-width: 75ch;
   --header-h: 0px;
-  /* Column widths for layout.css. */
+  /* Rail widths, for grid.css or for a host measuring its own grid. */
   --sidebar-w: 280px;
   --toc-w: 260px;
 
@@ -21,11 +21,10 @@
   --font-mono: "SF Mono", "SFMono-Regular", "JetBrains Mono", Menlo, Monaco, Consolas, ui-monospace, monospace;
   --font-body: var(--font-ui);
 
-  /* Swatch dots: the saturated version of each highlight, readable in both themes. */
-  --ann-dot-yellow: #facc15;
-  --ann-dot-green: #4ade80;
-  --ann-dot-blue: #60a5fa;
-  --ann-dot-pink: #f472b6;
+  /* The one highlight color that is the same in both themes, because it is only ever a fill
+     behind a label of the opposite tone: mermaid's categorical palette reaches for it once the
+     six themed --hl-* colors run out. */
+  --hl-pink: #f472b6;
 
   /* Light */
   color-scheme: light;
@@ -49,13 +48,7 @@
   --hl-title: #1d4ed8;
   --hl-attr: #a16207;
   --hl-built: #0e7490;
-  --ann-yellow: rgba(250, 204, 21, 0.4);
-  --ann-green: rgba(34, 197, 94, 0.22);
-  --ann-blue: rgba(59, 130, 246, 0.18);
-  --ann-pink: rgba(236, 72, 153, 0.18);
-  --ann-fade: #a3a7af;
-  --ann-comment: #2557c7;
-  --ann-danger: #b91c1c;
+  --danger: #b91c1c;
 }
 
 :root[data-content-font="mono"] {
@@ -85,16 +78,7 @@
     --hl-title: #82aaff;
     --hl-attr: #ffcb6b;
     --hl-built: #89ddff;
-    /* Alpha is per color, not shared: the four are balanced to the same composited luminance, so
-       they read as equally present. Brightening costs contrast here, because the highlight moves
-       toward the light body text, so these stop where body text still clears 4.5:1. */
-    --ann-yellow: rgba(250, 204, 21, 0.38);
-    --ann-green: rgba(74, 222, 128, 0.4);
-    --ann-blue: rgba(96, 165, 250, 0.48);
-    --ann-pink: rgba(244, 114, 182, 0.46);
-    --ann-fade: #6b7280;
-    --ann-comment: #7aa7ff;
-    --ann-danger: #f87171;
+    --danger: #f87171;
   }
 }
 
@@ -120,13 +104,7 @@
   --hl-title: #82aaff;
   --hl-attr: #ffcb6b;
   --hl-built: #89ddff;
-  --ann-yellow: rgba(250, 204, 21, 0.38);
-  --ann-green: rgba(74, 222, 128, 0.4);
-  --ann-blue: rgba(96, 165, 250, 0.48);
-  --ann-pink: rgba(244, 114, 182, 0.46);
-  --ann-fade: #6b7280;
-  --ann-comment: #7aa7ff;
-  --ann-danger: #f87171;
+  --danger: #f87171;
 }
 
 ::selection {

@@ -20,11 +20,12 @@ export function mountReader(opts) {
     if (opts.tables !== false)
         wrapTables(content);
     if (opts.headingIds !== false)
-        assignHeadingIds(content, { prefix: opts.headingPrefix });
+        assignHeadingIds(content, { prefix: opts.headingPrefix, ignore: opts.ignore });
     if (opts.externalLinks !== false)
         markExternalLinks(content);
-    if (opts.anchorLinks !== false)
-        cleanups.push(bindAnchorLinks(content, { onNavigate: opts.onNavigate }));
+    if (opts.anchorLinks !== false) {
+        cleanups.push(bindAnchorLinks(content, { onNavigate: opts.onNavigate, scrollTo: opts.scrollTo }));
+    }
     let lightbox = null;
     if (opts.lightbox !== false) {
         lightbox = createLightbox();
@@ -37,6 +38,8 @@ export function mountReader(opts) {
             list: opts.tocList,
             depth: opts.tocDepth,
             offset: opts.offset,
+            ignore: opts.ignore,
+            scrollTo: opts.scrollTo,
             onNavigate: opts.onNavigate,
         });
     }

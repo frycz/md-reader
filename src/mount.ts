@@ -15,8 +15,16 @@ export type MountOptions = {
   // Where to build the table of contents. Omit for no table of contents.
   tocList?: HTMLElement | null;
   tocDepth?: number;
-  // Distance from the top of the viewport at which a heading counts as current.
+  // Distance from the top of the viewport at which a heading counts as current. Defaults to the
+  // host's bar height, read from --header-h, plus 24px.
   offset?: () => number;
+  // How to reach a heading that a contents entry or an in-page link picked. The default animates
+  // its way there; pass `(el) => el.scrollIntoView()` for an instant jump, or re-apply the
+  // position yourself while images and diagrams are still settling.
+  scrollTo?: (el: HTMLElement, id: string) => void;
+  // Selector for the parts of the document that are not prose: they get no heading ids and no
+  // contents entries.
+  ignore?: string;
   code?: CodeOptions | false;
   mermaid?: boolean;
   lightbox?: boolean;
@@ -47,9 +55,11 @@ export function mountReader(opts: MountOptions): Reader {
     cleanups.push(bindCodeActions(content));
   }
   if (opts.tables !== false) wrapTables(content);
-  if (opts.headingIds !== false) assignHeadingIds(content, { prefix: opts.headingPrefix });
+  if (opts.headingIds !== false) assignHeadingIds(content, { prefix: opts.headingPrefix, ignore: opts.ignore });
   if (opts.externalLinks !== false) markExternalLinks(content);
-  if (opts.anchorLinks !== false) cleanups.push(bindAnchorLinks(content, { onNavigate: opts.onNavigate }));
+  if (opts.anchorLinks !== false) {
+    cleanups.push(bindAnchorLinks(content, { onNavigate: opts.onNavigate, scrollTo: opts.scrollTo }));
+  }
 
   let lightbox: Lightbox | null = null;
   if (opts.lightbox !== false) {
@@ -64,6 +74,8 @@ export function mountReader(opts: MountOptions): Reader {
       list: opts.tocList,
       depth: opts.tocDepth,
       offset: opts.offset,
+      ignore: opts.ignore,
+      scrollTo: opts.scrollTo,
       onNavigate: opts.onNavigate,
     });
   }
